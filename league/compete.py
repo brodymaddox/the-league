@@ -1,14 +1,11 @@
 """Competition and video recording logic."""
 
-from pathlib import Path
-from datetime import datetime
-
-import imageio
 import numpy as np
-from pettingzoo.classic import connect_four_v3
+from pettingzoo.classic import backgammon_v3
 from sb3_contrib import MaskablePPO
 
 from .config import Team, Config
+from .video import save_match_video
 
 
 def run_match(
@@ -16,7 +13,7 @@ def run_match(
     team2: Team,
     config: Config,
     record: bool = True,
-    max_turns: int = 100,
+    max_turns: int = 500,
 ) -> dict:
     """Run a match between two teams and optionally record video."""
     print(f"Match: {team1.name} vs {team2.name}")
@@ -27,13 +24,14 @@ def run_match(
     print(f"  Loaded both models")
 
     # Create environment with rendering
-    env = connect_four_v3.env(render_mode="rgb_array")
+    env = backgammon_v3.env(render_mode="rgb_array")
     env.reset()
 
     agents = list(env.possible_agents)
     agent_to_team = {agents[0]: (team1, model1), agents[1]: (team2, model2)}
 
     frames = []
+    scores_over_time = []
     rewards = {team1.id: 0, team2.id: 0}
     turn_count = 0
 
@@ -44,6 +42,9 @@ def run_match(
         team, model = agent_to_team[agent]
         rewards[team.id] += reward
 
+        # Track scores over time
+        scores_over_time.append((rewards[team1.id], rewards[team2.id]))
+
         if term or trunc:
             action = None
         else:
@@ -53,8 +54,8 @@ def run_match(
 
         env.step(action)
 
-        # Record frame
-        if record:
+        # Record frame (sample every few turns to keep video manageable)
+        if record and turn_count % 2 == 0:
             frame = env.render()
             if frame is not None:
                 frames.append(frame)
@@ -84,23 +85,12 @@ def run_match(
     print(f"  Result: {rewards}")
     print(f"  Winner: {result['winner']}")
 
-    # Save video
+    # Save video with overlays
     if record and frames:
-        video_path = save_video(frames, team1, team2)
+        # Sample scores to match frames
+        sampled_scores = scores_over_time[::2][: len(frames)]
+        video_path = save_match_video(frames, team1, team2, sampled_scores, winner)
         result["video"] = str(video_path)
         print(f"  Video saved: {video_path}")
 
     return result
-
-
-def save_video(frames: list, team1: Team, team2: Team) -> Path:
-    """Save frames as a video file."""
-    videos_dir = Path("videos")
-    videos_dir.mkdir(exist_ok=True)
-
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{team1.id}_vs_{team2.id}_{timestamp}.gif"
-    video_path = videos_dir / filename
-
-    imageio.mimsave(video_path, frames, duration=500, loop=0)  # 500ms per frame
-    return video_path
