@@ -1,14 +1,14 @@
 # Multi-agent RL environment
-pettingzoo[classic,atari]==1.24.3
-gymnasium[accept-rom-license]==0.29.1
+pettingzoo[classic]==1.24.3
+gymnasium==0.29.1
 
 # RL training
 stable-baselines3==2.3.2
 sb3-contrib==2.3.0
 
 # Video recording
-moviepy==1.0.3
-imageio[ffmpeg]==2.34.0
+imageio==2.34.0
+pillow==10.4.0
 
 # Utilities
 pyyaml==6.0.1

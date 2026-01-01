@@ -4,8 +4,9 @@ from pathlib import Path
 from datetime import datetime
 
 import imageio
-from pettingzoo.atari import pong_v3
-from stable_baselines3 import PPO
+import numpy as np
+from pettingzoo.classic import connect_four_v3
+from sb3_contrib import MaskablePPO
 
 from .config import Team, Config
 
@@ -15,18 +16,18 @@ def run_match(
     team2: Team,
     config: Config,
     record: bool = True,
-    max_frames: int = 3000,
+    max_turns: int = 100,
 ) -> dict:
     """Run a match between two teams and optionally record video."""
     print(f"Match: {team1.name} vs {team2.name}")
 
     # Load models
-    model1 = PPO.load(team1.model_path)
-    model2 = PPO.load(team2.model_path)
+    model1 = MaskablePPO.load(team1.model_path)
+    model2 = MaskablePPO.load(team2.model_path)
     print(f"  Loaded both models")
 
-    # Create environment
-    env = pong_v3.env(render_mode="rgb_array")
+    # Create environment with rendering
+    env = connect_four_v3.env(render_mode="rgb_array")
     env.reset()
 
     agents = list(env.possible_agents)
@@ -34,7 +35,7 @@ def run_match(
 
     frames = []
     rewards = {team1.id: 0, team2.id: 0}
-    frame_count = 0
+    turn_count = 0
 
     # Run the match
     for agent in env.agent_iter():
@@ -46,7 +47,9 @@ def run_match(
         if term or trunc:
             action = None
         else:
-            action, _ = model.predict(obs, deterministic=True)
+            # Get action mask and predict
+            mask = obs["action_mask"]
+            action, _ = model.predict(obs["observation"], action_masks=mask, deterministic=True)
 
         env.step(action)
 
@@ -56,8 +59,8 @@ def run_match(
             if frame is not None:
                 frames.append(frame)
 
-        frame_count += 1
-        if frame_count >= max_frames:
+        turn_count += 1
+        if turn_count >= max_turns:
             break
 
     env.close()
@@ -75,7 +78,7 @@ def run_match(
         "team2": team2.id,
         "rewards": rewards,
         "winner": winner.id if winner else "draw",
-        "frames": frame_count,
+        "turns": turn_count,
     }
 
     print(f"  Result: {rewards}")
@@ -99,5 +102,5 @@ def save_video(frames: list, team1: Team, team2: Team) -> Path:
     filename = f"{team1.id}_vs_{team2.id}_{timestamp}.mp4"
     video_path = videos_dir / filename
 
-    imageio.mimsave(video_path, frames, fps=30)
+    imageio.mimsave(video_path, frames, fps=2)  # Slow fps for board game
     return video_path
