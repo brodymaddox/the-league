@@ -99,8 +99,8 @@ def save_video(frames: list, team1: Team, team2: Team) -> Path:
     videos_dir.mkdir(exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{team1.id}_vs_{team2.id}_{timestamp}.mp4"
+    filename = f"{team1.id}_vs_{team2.id}_{timestamp}.gif"
     video_path = videos_dir / filename
 
-    imageio.mimsave(video_path, frames, fps=2)  # Slow fps for board game
+    imageio.mimsave(video_path, frames, duration=500, loop=0)  # 500ms per frame
     return video_path
