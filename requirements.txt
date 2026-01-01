@@ -13,3 +13,6 @@ imageio[ffmpeg]==2.34.0
 # Utilities
 pyyaml==6.0.1
 numpy==1.26.4
+
+# Testing
+pytest==8.3.4
