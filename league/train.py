@@ -46,8 +46,8 @@ class ConnectFourWrapper:
             obs, reward, term, trunc, info = self.env.last()
             return obs["observation"], reward, True, trunc, info
 
-        # Opponent's turn
-        if self.env.agent_selection == self.opponent_id:
+        # Opponent's turn (only if game not over)
+        if self.env.agents and self.env.agent_selection == self.opponent_id:
             self._play_opponent()
 
         obs, reward, term, trunc, info = self.env.last()
