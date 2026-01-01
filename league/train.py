@@ -22,6 +22,11 @@ class ConnectFourWrapper:
         self.observation_space = env.observation_space(agent_id)["observation"]
         self.action_space = env.action_space(agent_id)
 
+        # Required for SB3 compatibility
+        self.unwrapped = self
+        self.render_mode = None
+        self.metadata = {"render_modes": []}
+
     def reset(self, seed=None):
         self.env.reset(seed=seed)
 
