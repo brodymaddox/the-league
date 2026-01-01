@@ -41,24 +41,24 @@ class ConnectFourWrapper:
         # Our agent's turn
         self.env.step(action)
 
-        # Check if game over
-        if not self.env.agents:
-            obs, reward, term, trunc, info = self.env.last()
+        # Check if game over after our move
+        obs, reward, term, trunc, info = self.env.last()
+        if term or trunc or not self.env.agents:
             return obs["observation"], reward, True, trunc, info
 
-        # Opponent's turn (only if game not over)
-        if self.env.agents and self.env.agent_selection == self.opponent_id:
-            self._play_opponent()
+        # Opponent's turn
+        self._play_opponent()
 
+        # Get final state after opponent
         obs, reward, term, trunc, info = self.env.last()
         done = term or trunc or not self.env.agents
         return obs["observation"], reward, done, trunc, info
 
     def _play_opponent(self):
         """Play a random valid move for the opponent."""
-        if not self.env.agents:
+        obs, _, term, trunc, _ = self.env.last()
+        if term or trunc or not self.env.agents:
             return
-        obs, _, _, _, _ = self.env.last()
         mask = obs["action_mask"]
         valid_actions = np.where(mask == 1)[0]
         if len(valid_actions) > 0:
