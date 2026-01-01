@@ -1,7 +1,7 @@
 """Competition and video recording logic."""
 
 import numpy as np
-from pettingzoo.classic import backgammon_v3
+from pettingzoo.classic import connect_four_v3
 from sb3_contrib import MaskablePPO
 
 from .config import Team, Config
@@ -24,7 +24,7 @@ def run_match(
     print(f"  Loaded both models")
 
     # Create environment with rendering
-    env = backgammon_v3.env(render_mode="rgb_array")
+    env = connect_four_v3.env(render_mode="rgb_array")
     env.reset()
 
     agents = list(env.possible_agents)

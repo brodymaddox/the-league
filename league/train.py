@@ -1,6 +1,6 @@
 """Training logic for RL agents."""
 
-from pettingzoo.classic import backgammon_v3
+from pettingzoo.classic import connect_four_v3
 from sb3_contrib import MaskablePPO
 from sb3_contrib.common.wrappers import ActionMasker
 from sb3_contrib.common.maskable.policies import MaskableActorCriticPolicy
@@ -9,8 +9,8 @@ import numpy as np
 from .config import Team, Config
 
 
-class BackgammonWrapper:
-    """Wraps Backgammon for single-agent training against a random opponent."""
+class GameWrapper:
+    """Wraps a PettingZoo game for single-agent training against a random opponent."""
 
     def __init__(self, env, agent_id: str):
         self.env = env
@@ -74,7 +74,7 @@ class BackgammonWrapper:
         self.env.close()
 
 
-def _mask_fn(env: BackgammonWrapper) -> np.ndarray:
+def _mask_fn(env: GameWrapper) -> np.ndarray:
     return env.action_masks()
 
 
@@ -83,9 +83,9 @@ def train_team(team: Team, config: Config) -> None:
     print(f"Training {team.name} ({team.id})...")
 
     # Create environment
-    raw_env = backgammon_v3.env()
+    raw_env = connect_four_v3.env()
     raw_env.reset()
-    env = BackgammonWrapper(raw_env, "player_0")
+    env = GameWrapper(raw_env, "player_0")
     env = ActionMasker(env, _mask_fn)
 
     # Create or load model

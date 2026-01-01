@@ -128,7 +128,7 @@ def create_title_frame(team1: Team, team2: Team) -> np.ndarray:
     draw.text((VIDEO_WIDTH // 2, 740), team2.name, fill="white", font=font_large, anchor="mm")
 
     # Game type
-    draw.text((VIDEO_WIDTH // 2, 950), "BACKGAMMON", fill=(150, 150, 150), font=font_medium, anchor="mm")
+    draw.text((VIDEO_WIDTH // 2, 950), "CONNECT FOUR", fill=(150, 150, 150), font=font_medium, anchor="mm")
 
     return np.array(canvas)
 

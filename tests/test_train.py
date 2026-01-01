@@ -3,18 +3,18 @@
 import pytest
 import numpy as np
 
-from league.train import BackgammonWrapper
+from league.train import GameWrapper
 
 
-class TestBackgammonWrapper:
+class TestGameWrapper:
     def test_wrapper_exposes_spaces(self):
         """Test that wrapper correctly exposes observation and action spaces."""
-        from pettingzoo.classic import backgammon_v3
+        from pettingzoo.classic import connect_four_v3
 
-        env = backgammon_v3.env()
+        env = connect_four_v3.env()
         env.reset()
 
-        wrapper = BackgammonWrapper(env, "player_0")
+        wrapper = GameWrapper(env, "player_0")
 
         assert wrapper.observation_space is not None
         assert wrapper.action_space is not None
@@ -24,12 +24,12 @@ class TestBackgammonWrapper:
 
     def test_wrapper_reset_returns_obs(self):
         """Test that reset returns observation and info."""
-        from pettingzoo.classic import backgammon_v3
+        from pettingzoo.classic import connect_four_v3
 
-        env = backgammon_v3.env()
+        env = connect_four_v3.env()
         env.reset()
 
-        wrapper = BackgammonWrapper(env, "player_0")
+        wrapper = GameWrapper(env, "player_0")
         obs, info = wrapper.reset()
 
         assert obs is not None
@@ -39,12 +39,12 @@ class TestBackgammonWrapper:
 
     def test_wrapper_step_returns_tuple(self):
         """Test that step returns correct tuple format."""
-        from pettingzoo.classic import backgammon_v3
+        from pettingzoo.classic import connect_four_v3
 
-        env = backgammon_v3.env()
+        env = connect_four_v3.env()
         env.reset()
 
-        wrapper = BackgammonWrapper(env, "player_0")
+        wrapper = GameWrapper(env, "player_0")
         wrapper.reset()
 
         # Get a valid action from action mask
@@ -59,12 +59,12 @@ class TestBackgammonWrapper:
 
     def test_action_masks(self):
         """Test that action_masks returns valid mask."""
-        from pettingzoo.classic import backgammon_v3
+        from pettingzoo.classic import connect_four_v3
 
-        env = backgammon_v3.env()
+        env = connect_four_v3.env()
         env.reset()
 
-        wrapper = BackgammonWrapper(env, "player_0")
+        wrapper = GameWrapper(env, "player_0")
         wrapper.reset()
 
         mask = wrapper.action_masks()
