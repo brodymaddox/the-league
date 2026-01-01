@@ -27,7 +27,7 @@ class ConnectFourWrapper:
         self.render_mode = None
         self.metadata = {"render_modes": []}
 
-    def reset(self, seed=None):
+    def reset(self, seed=None, options=None):
         self.env.reset(seed=seed)
 
         # If opponent goes first, play random move
