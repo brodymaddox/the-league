@@ -1,0 +1,28 @@
+# Team configurations for The League
+# Each team has a unique ID, display name, and training parameters
+
+teams:
+  la:
+    name: "Los Angeles Knights"
+    color: "#FFD700"
+    training_steps: 100000
+
+  nyc:
+    name: "New York Titans"
+    color: "#1E90FF"
+    training_steps: 100000
+
+  chi:
+    name: "Chicago Storm"
+    color: "#DC143C"
+    training_steps: 100000
+
+  mia:
+    name: "Miami Heat"
+    color: "#FF6B35"
+    training_steps: 100000
+
+# Environment configuration
+environment:
+  name: "pong_v3"  # PettingZoo Atari environment
+  render_mode: "rgb_array"
