@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 import yaml
 
+from .games import get_game, GameInfo
+
 
 @dataclass
 class Team:
@@ -22,8 +24,8 @@ class Team:
 @dataclass
 class Config:
     teams: dict[str, Team]
-    env_name: str
-    render_mode: str
+    game_id: str
+    game: GameInfo
 
 
 def load_config(config_path: str = "teams.yaml") -> Config:
@@ -31,8 +33,12 @@ def load_config(config_path: str = "teams.yaml") -> Config:
     with open(config_path) as f:
         data = yaml.safe_load(f)
 
-    models_dir = Path("models")
-    models_dir.mkdir(exist_ok=True)
+    game_id = data.get("game", "connect_four")
+    game = get_game(game_id)
+
+    # Models go in game-specific directory
+    models_dir = Path("models") / game_id
+    models_dir.mkdir(parents=True, exist_ok=True)
 
     teams = {}
     for team_id, team_data in data["teams"].items():
@@ -46,8 +52,8 @@ def load_config(config_path: str = "teams.yaml") -> Config:
 
     return Config(
         teams=teams,
-        env_name=data["environment"]["name"],
-        render_mode=data["environment"]["render_mode"],
+        game_id=game_id,
+        game=game,
     )
 
 

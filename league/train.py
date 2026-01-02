@@ -1,6 +1,5 @@
 """Training logic for RL agents."""
 
-from pettingzoo.classic import connect_four_v3
 from sb3_contrib import MaskablePPO
 from sb3_contrib.common.wrappers import ActionMasker
 from sb3_contrib.common.maskable.policies import MaskableActorCriticPolicy
@@ -80,12 +79,15 @@ def _mask_fn(env: GameWrapper) -> np.ndarray:
 
 def train_team(team: Team, config: Config) -> None:
     """Train a team's agent using Maskable PPO."""
-    print(f"Training {team.name} ({team.id})...")
+    print(f"Training {team.name} ({team.id}) for {config.game.name}...")
 
-    # Create environment
-    raw_env = connect_four_v3.env()
+    # Create environment using game from config
+    raw_env = config.game.env_fn()
     raw_env.reset()
-    env = GameWrapper(raw_env, "player_0")
+
+    # Get first agent ID
+    agent_id = raw_env.possible_agents[0]
+    env = GameWrapper(raw_env, agent_id)
     env = ActionMasker(env, _mask_fn)
 
     # Create or load model

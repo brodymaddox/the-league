@@ -96,7 +96,7 @@ def create_frame(
     return np.array(canvas)
 
 
-def create_title_frame(team1: Team, team2: Team) -> np.ndarray:
+def create_title_frame(team1: Team, team2: Team, game_name: str = "Connect Four") -> np.ndarray:
     """Create a title/intro frame."""
     canvas = Image.new("RGB", (VIDEO_WIDTH, VIDEO_HEIGHT), color=(20, 20, 30))
     draw = ImageDraw.Draw(canvas)
@@ -128,7 +128,7 @@ def create_title_frame(team1: Team, team2: Team) -> np.ndarray:
     draw.text((VIDEO_WIDTH // 2, 740), team2.name, fill="white", font=font_large, anchor="mm")
 
     # Game type
-    draw.text((VIDEO_WIDTH // 2, 950), "CONNECT FOUR", fill=(150, 150, 150), font=font_medium, anchor="mm")
+    draw.text((VIDEO_WIDTH // 2, 950), game_name.upper(), fill=(150, 150, 150), font=font_medium, anchor="mm")
 
     return np.array(canvas)
 
@@ -187,6 +187,7 @@ def save_match_video(
     team2: Team,
     scores_over_time: list[tuple[float, float]],
     winner: Team | None,
+    game_name: str = "Connect Four",
 ) -> Path:
     """Create and save an engaging match video."""
     videos_dir = Path("videos")
@@ -195,7 +196,7 @@ def save_match_video(
     frames = []
 
     # Title frames (show for ~2 seconds at 4fps = 8 frames)
-    title_frame = create_title_frame(team1, team2)
+    title_frame = create_title_frame(team1, team2, game_name)
     for _ in range(8):
         frames.append(title_frame)
 

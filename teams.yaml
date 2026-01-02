@@ -23,6 +23,5 @@ teams:
     training_steps: 100000
 
 # Environment configuration
-environment:
-  name: "connect_four_v3"  # PettingZoo Classic environment
-  render_mode: "rgb_array"
+# Available games: connect_four, chess, go, rps
+game: "connect_four"

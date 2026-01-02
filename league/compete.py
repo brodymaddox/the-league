@@ -1,7 +1,6 @@
 """Competition and video recording logic."""
 
 import numpy as np
-from pettingzoo.classic import connect_four_v3
 from sb3_contrib import MaskablePPO
 
 from .config import Team, Config
@@ -16,7 +15,7 @@ def run_match(
     max_turns: int = 500,
 ) -> dict:
     """Run a match between two teams and optionally record video."""
-    print(f"Match: {team1.name} vs {team2.name}")
+    print(f"Match: {team1.name} vs {team2.name} ({config.game.name})")
 
     # Load models
     model1 = MaskablePPO.load(team1.model_path)
@@ -24,7 +23,7 @@ def run_match(
     print(f"  Loaded both models")
 
     # Create environment with rendering
-    env = connect_four_v3.env(render_mode="rgb_array")
+    env = config.game.env_fn(render_mode="rgb_array")
     env.reset()
 
     agents = list(env.possible_agents)
@@ -77,6 +76,7 @@ def run_match(
     result = {
         "team1": team1.id,
         "team2": team2.id,
+        "game": config.game_id,
         "rewards": rewards,
         "winner": winner.id if winner else "draw",
         "turns": turn_count,
@@ -89,7 +89,9 @@ def run_match(
     if record and frames:
         # Sample scores to match frames
         sampled_scores = scores_over_time[::2][: len(frames)]
-        video_path = save_match_video(frames, team1, team2, sampled_scores, winner)
+        video_path = save_match_video(
+            frames, team1, team2, sampled_scores, winner, game_name=config.game.name
+        )
         result["video"] = str(video_path)
         print(f"  Video saved: {video_path}")
 
