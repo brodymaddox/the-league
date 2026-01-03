@@ -1,0 +1,26 @@
+# Assets configuration for The League video production
+# Place your custom assets in the assets/ directory
+
+# Background music (loop during gameplay)
+# Supported: .mp3, .wav, .ogg
+background_music: "assets/audio/background.mp3"
+
+# Sound effects
+sfx:
+  intro: "assets/audio/intro.mp3"
+  winner: "assets/audio/winner.mp3"
+  move: "assets/audio/move.mp3"
+
+# Images
+images:
+  logo: "assets/images/logo.png"
+  background: "assets/images/background.png"
+  frame_overlay: "assets/images/frame_overlay.png"
+
+# Video settings
+video:
+  width: 720
+  height: 1280
+  fps: 30
+  intro_duration: 3.0  # seconds
+  outro_duration: 4.0  # seconds

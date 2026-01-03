@@ -8,7 +8,9 @@ sb3-contrib==2.3.0
 
 # Video recording
 imageio==2.34.0
+imageio-ffmpeg==0.5.1
 pillow==10.4.0
+moviepy==1.0.3
 
 # Utilities
 pyyaml==6.0.1
