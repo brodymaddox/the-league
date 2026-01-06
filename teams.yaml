@@ -1,26 +1,35 @@
 # Team configurations for The League
 # Each team has a unique ID, display name, and training parameters
+#
+# skill_level (0.0 to 1.0): Controls play quality during competition
+#   1.0 = Always optimal moves (deterministic)
+#   0.7 = 70% optimal, 30% random (more unpredictable)
+#   Lower values create weaker teams that make more mistakes
 
 teams:
   la:
     name: "Los Angeles Knights"
     color: "#FFD700"
     training_steps: 100000
+    skill_level: 0.95  # Elite - rarely makes mistakes
 
   nyc:
     name: "New York Titans"
     color: "#1E90FF"
     training_steps: 100000
+    skill_level: 0.85  # Strong - occasional errors
 
   chi:
     name: "Chicago Storm"
     color: "#DC143C"
     training_steps: 100000
+    skill_level: 0.75  # Solid - some inconsistency
 
   mia:
     name: "Miami Heat"
     color: "#FF6B35"
     training_steps: 100000
+    skill_level: 0.65  # Developing - prone to mistakes
 
 # Environment configuration
 # Available games: connect_four, chess, go, rps

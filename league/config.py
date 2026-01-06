@@ -15,6 +15,7 @@ class Team:
     color: str
     training_steps: int
     model_path: Path
+    skill_level: float = 1.0  # 0.0-1.0, probability of optimal action
 
     @property
     def trained(self) -> bool:
@@ -48,6 +49,7 @@ def load_config(config_path: str = "teams.yaml") -> Config:
             color=team_data["color"],
             training_steps=team_data["training_steps"],
             model_path=models_dir / f"{team_id}.zip",
+            skill_level=team_data.get("skill_level", 1.0),
         )
 
     return Config(

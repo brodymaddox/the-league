@@ -7,6 +7,32 @@ from .config import Team, Config
 from .video import save_match_video
 
 
+def select_action_with_skill(model, obs: dict, skill_level: float) -> int:
+    """Select action based on team skill level.
+
+    Args:
+        model: Trained MaskablePPO model
+        obs: Observation dictionary with 'observation' and 'action_mask'
+        skill_level: Float 0.0-1.0, probability of taking optimal action
+
+    Returns:
+        Selected action index
+    """
+    mask = obs["action_mask"]
+    legal_actions = np.where(mask == 1)[0]
+
+    if len(legal_actions) == 0:
+        return 0  # No legal actions (shouldn't happen)
+
+    # With probability skill_level, use the model's optimal action
+    if np.random.random() < skill_level:
+        action, _ = model.predict(obs["observation"], action_masks=mask, deterministic=True)
+        return int(action)
+    else:
+        # Take a random legal action (simulating a mistake)
+        return np.random.choice(legal_actions)
+
+
 def run_match(
     team1: Team,
     team2: Team,
@@ -16,6 +42,7 @@ def run_match(
 ) -> dict:
     """Run a match between two teams and optionally record video."""
     print(f"Match: {team1.name} vs {team2.name} ({config.game.name})")
+    print(f"  Skill levels: {team1.id}={team1.skill_level:.0%}, {team2.id}={team2.skill_level:.0%}")
 
     # Load models
     model1 = MaskablePPO.load(team1.model_path)
@@ -47,9 +74,8 @@ def run_match(
         if term or trunc:
             action = None
         else:
-            # Get action mask and predict
-            mask = obs["action_mask"]
-            action, _ = model.predict(obs["observation"], action_masks=mask, deterministic=True)
+            # Select action based on team's skill level
+            action = select_action_with_skill(model, obs, team.skill_level)
 
         env.step(action)
 
